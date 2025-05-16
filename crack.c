@@ -4,9 +4,8 @@
 
 #include "md5.h"
 
-const int PASS_LEN = 20;        // Maximum any password will be
-const int HASH_LEN = 33;        // Length of MD5 hash strings
-//const int HASH_LINE_LEN = 256;  // Length of the hash line
+const int PASS_LEN = 20;        
+const int HASH_LEN = 33;        
 
 // Given a target plaintext word, use it to try to find
 // a matching hash in the hashFile.
@@ -16,13 +15,13 @@ const int HASH_LEN = 33;        // Length of MD5 hash strings
 #define MAX_WORD_LEN 100
 
 char *tryWord(char *plaintext, char *hashFilename) {
-    // Step 1: Hash the plaintext
+    // Hash the plaintext
     char *computedHash = md5(plaintext, strlen(plaintext));
     if (!computedHash) {
         return NULL;
     }
 
-    // Step 2: Open the hash file
+    // Open the hash file
     FILE *file = fopen(hashFilename, "r");
     if (!file) {
         perror("Could not open hash file");
@@ -30,7 +29,7 @@ char *tryWord(char *plaintext, char *hashFilename) {
         return NULL;
     }
 
-    // Step 3: Loop through the file line by line
+    // Loop through the hash file, one line at a time.
     char line[HASH_LINE_LEN];
     while (fgets(line, sizeof(line), file)) {
         // Remove trailing newline
@@ -39,16 +38,16 @@ char *tryWord(char *plaintext, char *hashFilename) {
             line[len - 1] = '\0';
         }
 
-        // Step 4: Compare the file hash to computed hash
+        // Comparing file hash to computed hash
         if (strcmp(computedHash, line) == 0) {
             fclose(file);
-            char *result = strdup(computedHash); // copy so caller can free
+            char *result = strdup(computedHash);
             free(computedHash);
             return result;
         }
     }
 
-    // Step 5: Cleanup and return NULL if no match
+    // Cleanup or return NULL if no match
     fclose(file);
     free(computedHash);
     return NULL;
@@ -61,10 +60,12 @@ char *tryWord(char *plaintext, char *hashFilename) {
         fprintf(stderr, "Usage: %s hash_file dict_file\n", argv[0]);
         exit(1);
     }
-
+    
+    // New add below
+    //Erorr propmt if unable to open
     FILE *dictFile = fopen(argv[2], "r");
     if (!dictFile) {
-        perror("Could not open dictionary file");
+        perror("ERORR** can not open the dictionary file please fix");
         exit(1);
     }
 
